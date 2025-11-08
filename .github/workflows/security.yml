@@ -11,8 +11,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Recomendado por Gitleaks para tener historial completo del repo
+          fetch-depth: 0
 
       - name: Run Gitleaks (secret scanning)
         uses: gitleaks/gitleaks-action@v2
-        with:
-          args: detect --source . --no-banner --redact
+        env:
+          # Token automático de GitHub, no hace falta que lo crees a mano
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
