@@ -1,6 +1,3 @@
-// test/smoke.test.js
-// Test ultra simple solo para demostrar el flujo Dev (CI)
-
 const assert = require("assert");
 
 function sum(a, b) {
