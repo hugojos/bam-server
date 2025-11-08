@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 3000;
 app.get("/", (req, res) => {
   res.json({
     message: "DevSecOps demo - PR MALO ❌",
-    // Solo mostramos las keys para no leakear valores completos
     loadedConfigKeys: Object.keys(config),
     lodashVersion: _.VERSION
   });
