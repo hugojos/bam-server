@@ -1,10 +1,11 @@
 {
   "name": "devsecops-demo",
   "version": "1.0.0",
-  "description": "Demo DevSecOps con GitHub Actions, Gitleaks, npm audit y una API Express sencilla",
+  "description": "Demo DevSecOps con GitHub Actions (Dev + Sec)",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node test/smoke.test.js"
   },
   "author": "",
   "license": "MIT",

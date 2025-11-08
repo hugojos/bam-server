@@ -1,19 +1,19 @@
 // index.js (main limpio)
-// API mínima con Express, lista para levantar en cualquier lado.
+// API mínima con Express para la demo DevSecOps
 
 const express = require("express");
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Endpoint raíz para probar que el server está vivo
+// Endpoint raíz
 app.get("/", (req, res) => {
   res.json({
     message: "DevSecOps demo - main branch limpia ✅",
   });
 });
 
-// Endpoint de healthcheck (útil si alguien la despliega)
+// Endpoint de healthcheck
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
