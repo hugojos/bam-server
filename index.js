@@ -1,11 +1,15 @@
 const express = require("express");
-const app = express();
+const _ = require("lodash");
+const config = require("./config");
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
   res.json({
-    message: "DevSecOps demo - main branch limpia ✅",
+    message: "DevSecOps demo - PR MALO ❌",
+    loadedConfigKeys: Object.keys(config),
+    lodashVersion: _.VERSION
   });
 });
 

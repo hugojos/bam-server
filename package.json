@@ -1,7 +1,7 @@
 {
   "name": "devsecops-demo",
-  "version": "1.0.0",
-  "description": "Demo DevSecOps con GitHub Actions (Dev + Sec)",
+  "version": "1.1.0",
+  "description": "Demo DevSecOps con vulnerabilidades introducidas a propósito",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -10,6 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "lodash": "4.17.10"
   }
 }
