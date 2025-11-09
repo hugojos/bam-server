@@ -1,4 +1,4 @@
-name: PR Security - Gitleaks
+name: PR Gitleaks
 
 on:
   pull_request:
