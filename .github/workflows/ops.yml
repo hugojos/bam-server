@@ -1,0 +1,81 @@
+name: ops
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Imagen a desplegar (ghcr.io/ORG/REPO:sha o :latest)"
+        required: true
+        default: "ghcr.io/${{ github.repository }}:latest"
+      apply:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    # Ejecución en maquina local (runner self-hosted en WSL)
+    runs-on: self-hosted
+    env:
+      TF_IN_AUTOMATION: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker sanity
+        run: |
+          docker version
+          docker run --rm hello-world
+
+      - name: Ensure Terraform (si no está)
+        run: |
+          if ! command -v terraform >/dev/null; then
+            sudo apt-get update -y
+            sudo apt-get install -y gnupg software-properties-common
+            curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp.gpg
+            echo "deb [signed-by=/usr/share/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+              sudo tee /etc/apt/sources.list.d/hashicorp.list
+            sudo apt-get update && sudo apt-get install -y terraform
+          fi
+          terraform -version
+
+      - name: Terraform init/validate/plan (local Docker)
+        working-directory: infra
+        run: |
+          terraform init -input=false
+          terraform validate
+          terraform plan -var "app_image=${{ inputs.image_tag }}" -out=tfplan
+
+      - name: Publicar tfplan como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ github.run_id }}
+          path: infra/tfplan
+
+  apply:
+    needs: plan
+    if: ${{ inputs.apply == true }}
+    runs-on: self-hosted
+    # environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Descargar tfplan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan-${{ github.run_id }}
+          path: infra
+
+      - name: Terraform apply
+        working-directory: infra
+        run: terraform apply -input=false tfplan
+
+      - name: Smoke test local
+        run: |
+          sleep 5
+          curl -fsS http://localhost:8080/health
+          curl -fsS http://localhost:8080/metrics | head -n 5
+          echo "Prometheus: http://localhost:9090 | Grafana: http://localhost:3000 (admin/admin)"
